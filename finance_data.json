@@ -7,7 +7,17 @@
             "amount": 800.0,
             "category": "Food",
             "description": "so sweet"
+        },
+        {
+            "id": 2,
+            "date": "2026-10-31",
+            "type": "income",
+            "amount": 200.0,
+            "category": "Business",
+            "description": "Sold some gadgets"
         }
     ],
-    "budgets": {}
+    "budgets": {
+        "Food": 3000.0
+    }
 }

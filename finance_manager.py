@@ -60,7 +60,7 @@ def add_transaction(data):
     transactions = data["transactions"]
 
     if transactions:
-     new_id = max([trans["id"] for trans in transactions] + 1)
+     new_id = max([trans["id"] for trans in transactions]) + 1
     else:
      new_id = 1
 
@@ -147,7 +147,7 @@ def generate_monthly_summery(data):
     if not target_month:
         target_month = datetime.now().strftime("%Y-%m")
 
-    monthly_transactions = [trans for trans in data["transactions"] if trans["date"].startwith(target_month)]
+    monthly_transactions = [trans for trans in data["transactions"] if trans["date"].startswith(target_month)]
 
     if not monthly_transactions:
         print(f"No transactions found for month {target_month}")
