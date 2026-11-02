@@ -11,6 +11,9 @@ def load_data():
                 return json.load(file)
         except json.JSONDecodeError:
             print("Error reading file")
+            backup_file = DATA_FILE + ".backup"
+            os.rename(DATA_FILE, backup_file)
+            print(f"Backed up corrupted file to {backup_file}")
 
     return {"transactions" : [], "budgets": {}}
 
@@ -54,8 +57,16 @@ def add_transaction(data):
         print("Invalid number format")
         return
 
-    category = input("Category (Example: Food, Transport, Rent, Business): ").strip().capitalize()
+    while True:
+        category = input("Category (Example: Food, Transport, Rent, Business): ").strip().capitalize()
+        if category:
+            break
+        print("Category cannot be empty. Please enter a valid category")
+    
     description = input("Description: ").strip()
+
+    if not description:
+        description = "No description"
 
     transactions = data["transactions"]
 
@@ -146,6 +157,12 @@ def generate_monthly_summery(data):
     target_month = input("Enter target month (YYYY-MM) [Leave blank for current month]: ").strip()
     if not target_month:
         target_month = datetime.now().strftime("%Y-%m")
+    else:
+        try:
+            datetime.strptime(target_month, "%Y-%m")
+        except ValueError:
+            print("Invalid month format. Please use YYYY-MM")
+            return
 
     monthly_transactions = [trans for trans in data["transactions"] if trans["date"].startswith(target_month)]
 
