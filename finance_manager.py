@@ -31,11 +31,11 @@ def add_transaction(data):
     print("\n--- Add a new Transaction ---")
     input_type = input("Type: (income / expense): ").strip().lower()
 
-    if input_type not in ["income", "expenses"]:
+    if input_type not in ["income", "expense"]:
         print("Invalid type! Must be 'income' or 'expense'")
         return
 
-    date_str = input("Date (YYYU-MM-DD) [leave blank for today]: ").strip()
+    date_str = input("Date (YYYY-MM-DD) [leave blank for today]: ").strip()
     if not date_str:
         date_str = datetime.now().strftime("%Y-%m-%d")
     else:
@@ -43,7 +43,7 @@ def add_transaction(data):
             datetime.strptime(date_str, "%Y-%m-%d")
         except ValueError:
             print("Invalid date format. Use YYYY-MM-DD")
-        return
+            return
 
     try:
         amount = float(input("Amount ($): "))

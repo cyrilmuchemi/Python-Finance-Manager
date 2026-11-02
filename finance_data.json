@@ -15,6 +15,30 @@
             "amount": 200.0,
             "category": "Business",
             "description": "Sold some gadgets"
+        },
+        {
+            "id": 3,
+            "date": "2026-10-31",
+            "type": "income",
+            "amount": 150.0,
+            "category": "Business",
+            "description": "Sold some shoes"
+        },
+        {
+            "id": 4,
+            "date": "2026-10-31",
+            "type": "income",
+            "amount": 120.0,
+            "category": "Business",
+            "description": "Sold 3 pairs of sandals"
+        },
+        {
+            "id": 5,
+            "date": "2026-10-31",
+            "type": "expense",
+            "amount": 60.0,
+            "category": "Taxes",
+            "description": "Paid taxes"
         }
     ],
     "budgets": {
