@@ -1,34 +1,6 @@
-import json
-import os
 from datetime import datetime
-
-DATA_FILE = "finance_data.json"
-
-def load_data():
-    if os.path.exists(DATA_FILE):
-        try:
-            with open(DATA_FILE, "r") as file:
-                return json.load(file)
-        except json.JSONDecodeError:
-            print("Error reading file")
-            backup_file = DATA_FILE + ".backup"
-            os.rename(DATA_FILE, backup_file)
-            print(f"Backed up corrupted file to {backup_file}")
-
-    return {"transactions" : [], "budgets": {}}
-
-def save_data(data):
-    with open(DATA_FILE, "w") as file:
-        json.dump(data, file, indent=4)
-
-def display_menu():
-    print("\n=== Personal Finance Manager ===")
-    print("1. Add Transaction (Income / Expense)")
-    print("2. View Transactions")
-    print("3. Search Transactions by Category")
-    print("4. Set or Update Monthly Budgets")
-    print("5 Generate Monthly Summery & Budget Check")
-    print("6. Exit")
+from models import Transaction
+from storage import save_data
 
 def add_transaction(data):
     print("\n--- Add a new Transaction ---")
@@ -135,6 +107,7 @@ def search_by_category(data):
         sign = "+" if trans["type"] == "income" else "-"
         print(f"{trans['id']:<4} | {trans['date']:<10} | {trans['type']:<8} | {sign}${trans['amount']:<9.2f} | {trans['description']}")
 
+
 def set_budget(data):
     print("\n--- Set or Update Monthly Budgets ---")
     category = input("Enter category name (e.g: Food,Transport, Rent): ").strip().capitalize()
@@ -151,87 +124,3 @@ def set_budget(data):
     data["budgets"][category] = limit
     save_data(data)
     print(f"Budget for '{category}' successfully set to ${limit:.2f}")
-
-def generate_monthly_summery(data):
-    print("\n--- Monthly Summary & Budget Check ---")
-    target_month = input("Enter target month (YYYY-MM) [Leave blank for current month]: ").strip()
-    if not target_month:
-        target_month = datetime.now().strftime("%Y-%m")
-    else:
-        try:
-            datetime.strptime(target_month, "%Y-%m")
-        except ValueError:
-            print("Invalid month format. Please use YYYY-MM")
-            return
-
-    monthly_transactions = [trans for trans in data["transactions"] if trans["date"].startswith(target_month)]
-
-    if not monthly_transactions:
-        print(f"No transactions found for month {target_month}")
-        return
-
-    total_income = sum(trans["amount"] for trans in monthly_transactions if trans["type"] == "income")
-    total_expense = sum(trans["amount"] for trans in monthly_transactions if trans["type"] == "expense")
-    net_balance = total_income - total_expense
-
-    print(f"==== Summery FOR {target_month} ====")
-    print(f"Total Income: {total_income:.2f}")
-    print(f"Total Expense: {total_expense:.2f}")
-    print(f"Net Balance: {net_balance:.2f}")
-
-    print("\n--- Spending vs Budgets ---")
-    if not data["budgets"]:
-        print("No monthly budgets configured yet.")
-        return
-
-    category_spending = {}
-    for trans in monthly_transactions:
-        if trans["type"] == "expense":
-            category = trans["category"]
-            category_spending[category] = category_spending.get(category, 0.0) + trans["amount"]
-
-    print(f"{'Category':<12} | {'Spent':<10} | {'Budget':<10} | {'Status'}")
-    print("-" * 50)
-
-    for category, limit in data["budgets"].items():
-        spent = category_spending.get(category, 0.0)
-        status = "Over Budget!" if spent > limit else "On Track"
-        print(f"{category:<12} | ${spent:<9.2f} | ${limit:<9.2f} | {status}")
-    print("=" * 55)
-
-def main():
-    data = load_data()
-
-    while True:
-        display_menu()
-        choice = input("\nChoose an option (1 - 6): ").strip()
-
-        if choice == "1":
-            add_transaction(data)
-        elif choice == "2":
-            view_transactions(data)
-        elif choice == "3":
-            search_by_category(data)
-        elif choice == "4":
-            set_budget(data)
-        elif choice == "5":
-            generate_monthly_summery(data)
-        elif choice == "6":
-            save_data(data)
-            print("Data saved. Exiting Finance Manager. Goodbye!")
-            break
-        else:
-            print("Invalid choice. Please enter a number between 1 and 6.")
-
-if __name__ == "__main__":
-    main()
-
-
-
-    
-
-
-
-
-
-    
