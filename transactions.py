@@ -47,14 +47,14 @@ def add_transaction(data):
     else:
      new_id = 1
 
-    new_transaction = {
-        "id": new_id,
-        "date": date_str,
-        "type": input_type,
-        "amount": amount,
-        "category": category,
-        "description": description
-    }
+    new_transaction = Transaction(
+        new_id,
+        date_str,
+        input_type,
+        amount,
+        category,
+        description
+    )
 
     transactions.append(new_transaction)
     save_data(data)
@@ -75,37 +75,52 @@ def add_transaction(data):
             print(f"Spent: ${category_spent:.2f} / Limit: ${limit:.2f}")
 
 def view_transactions(data):
-    print("\n--- Transaction History ---")
-    transactions = data["transactions"]
+    print("\n---- Transaction History ----")
+    raw_transactions = data["transactions"]
 
-    if not transactions:
+    if not raw_transactions:
         print("No transactions recorded yet")
         return
 
-    print(f"{'ID':<4} | {'Date':<10} | {'Type':<8} | {'Amount':<10} | {'Category':<12} | {'Description'}")
     print("-" * 75)
 
-    for trans in transactions:
-        sign = "+" if trans["type"] == "income" else "-"
-        print(f"{trans['id']:<4} | {trans['date']:<10} | {trans['type']:<8} | {sign}${trans['amount']:<9.2f} | {trans['category']:<12} | {trans['description']}")
+    for transaction_dict in raw_transactions:
+        transaction_object =  Transaction(
+            id = transaction_dict["id"],
+            date = transaction_dict["date"],
+            type_ = transaction_dict["type"],
+            amount = transaction_dict["amount"],
+            category = transaction_dict["category"],
+            description = transaction_dict["description"]
+        )
+
+        print(transaction_object.transaction_details())
+    print("-" * 75)
 
 def search_by_category(data):
-    print("\n--- Search By Category--- ")
+    print("\n---- Search By Category ----")
     category_query = input("Enter category to search (Food, Transport, etc): ").strip().capitalize()
 
-    matched = [trans for trans in data["transactions"] if trans["category"].lower() == category_query.lower()]
+    matched_dicts = [trans for trans in data["transactions"] if trans["category"].lower() == category_query.lower()]
 
-    if not matched:
+    if not matched_dicts:
         print(f"No transactions found for category '{category_query}'")
         return
     
     print(f"\nTransactions in category: {category_query}")
-    print(f"{'ID':<4} | {'Date':<10} | {'Type':<8} | {'Amount':<10} | {'Description'}")
     print("-" * 60)
 
-    for trans in matched:
-        sign = "+" if trans["type"] == "income" else "-"
-        print(f"{trans['id']:<4} | {trans['date']:<10} | {trans['type']:<8} | {sign}${trans['amount']:<9.2f} | {trans['description']}")
+    for transaction_dict in matched_dicts:
+        transaction_object = Transaction(
+            id = transaction_dict["id"],
+            date = transaction_dict["date"],
+            type_ = transaction_dict["type"],
+            amount = transaction_dict["amount"],
+            category = transaction_dict["category"],
+            description = transaction_dict["description"]
+        )
+        print(transaction_object.transaction_details())
+    print("-" * 60)
 
 
 def set_budget(data):

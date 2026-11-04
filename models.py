@@ -7,6 +7,13 @@ class Transaction:
         self.category = category
         self.description = description
 
+    def formatted_amount(self):
+        sign = "+" if self.type == "income" else "-"
+        return f"{sign}{self.amount:.2f}"
+
+    def transaction_details(self):
+        return f"Transaction #{self.id} | {self.date} | {self.category} | {self.description} | {self.formatted_amount()}"
+
     def to_dict(self):
         return{
             "id": self.id,
