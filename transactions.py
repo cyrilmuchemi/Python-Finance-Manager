@@ -43,9 +43,9 @@ def add_transaction(data):
     transactions = data["transactions"]
 
     if transactions:
-     new_id = max([trans["id"] for trans in transactions]) + 1
+        new_id = max([trans["id"] for trans in transactions]) + 1
     else:
-     new_id = 1
+        new_id = 1
 
     new_transaction = Transaction(
         new_id,
