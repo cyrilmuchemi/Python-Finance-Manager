@@ -56,7 +56,7 @@ def add_transaction(data):
         description
     )
 
-    transactions.append(new_transaction)
+    transactions.append(new_transaction.to_dict)
     save_data(data)
     print(f"Transaction {new_id} added successfully")
 
@@ -85,15 +85,7 @@ def view_transactions(data):
     print("-" * 75)
 
     for transaction_dict in raw_transactions:
-        transaction_object =  Transaction(
-            id = transaction_dict["id"],
-            date = transaction_dict["date"],
-            type_ = transaction_dict["type"],
-            amount = transaction_dict["amount"],
-            category = transaction_dict["category"],
-            description = transaction_dict["description"]
-        )
-
+        transaction_object = Transaction.from_dict(transaction_dict)
         print(transaction_object.transaction_details())
     print("-" * 75)
 
@@ -111,14 +103,7 @@ def search_by_category(data):
     print("-" * 60)
 
     for transaction_dict in matched_dicts:
-        transaction_object = Transaction(
-            id = transaction_dict["id"],
-            date = transaction_dict["date"],
-            type_ = transaction_dict["type"],
-            amount = transaction_dict["amount"],
-            category = transaction_dict["category"],
-            description = transaction_dict["description"]
-        )
+        transaction_object = Transaction.from_dict(transaction_dict)
         print(transaction_object.transaction_details())
     print("-" * 60)
 

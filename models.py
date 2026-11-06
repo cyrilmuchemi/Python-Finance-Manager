@@ -28,6 +28,17 @@ class Transaction:
             raise ValueError("Transaction type must be either 'income' or 'expense'.")
         self._type = normalized_type
 
+    @classmethod
+    def from_dict(cls, data):
+        return cls(
+            id = data["id"],
+            date = data["date"],
+            type_ = data["type"],
+            amount = data["amount"],
+            category = data["category"],
+            description = data["description"]
+        )
+
     def formatted_amount(self):
         sign = "+" if self.type == "income" else "-"
         return f"{sign}${self.amount:.2f}"
