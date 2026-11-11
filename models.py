@@ -116,7 +116,10 @@ class FinanceManager:
     @classmethod
     def from_dict(cls, data):
         manager = cls()
-        manager.budgets = data.get("budgets", {})
+        manager.budgets = {
+            category.strip().lower(): amount
+            for category, amount in data.get("budgets", {}).items()
+        }
 
         for trans_dict in data.get("transactions", []):
             transaction_obj = Transaction.from_dict(trans_dict)

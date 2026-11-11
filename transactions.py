@@ -1,8 +1,7 @@
 from datetime import datetime
-from models import Transaction
-from storage import save_data
+from models import Transaction, FinanceManager
 
-def add_transaction(data):
+def add_transaction(manager:FinanceManager):
     print("\n--- Add a new Transaction ---")
     input_type = input("Type: (income / expense): ").strip().lower()
 
@@ -22,9 +21,6 @@ def add_transaction(data):
 
     try:
         amount = float(input("Amount ($): "))
-        if amount <= 0:
-            print("Amount must be greater than 0")
-            return
     except ValueError:
         print("Invalid number format")
         return
@@ -40,87 +36,94 @@ def add_transaction(data):
     if not description:
         description = "No description"
 
-    transactions = data["transactions"]
-
-    if transactions:
-        new_id = max([trans["id"] for trans in transactions]) + 1
-    else:
-        new_id = 1
-
-    new_transaction = Transaction(
-        new_id,
-        date_str,
-        input_type,
-        amount,
-        category,
-        description
-    )
-
-    transactions.append(new_transaction.to_dict)
-    save_data(data)
-    print(f"Transaction {new_id} added successfully")
-
-    if input_type == "expense" and category in data["budgets"]:
-        current_month = date_str[:7]
-        category_spent = sum(
-            trans["amount"] for trans in transactions
-            if trans["type"] == "expense"
-            and trans["category"].lower() == category.lower() 
-            and trans["date"].startswith(current_month)
-        )
-
-        limit = data["budgets"][category]
-        if category_spent > limit:
-            print(f"ALERT! You have exceeded your budget for {category}")
-            print(f"Spent: ${category_spent:.2f} / Limit: ${limit:.2f}")
-
-def view_transactions(data):
-    print("\n---- Transaction History ----")
-    raw_transactions = data["transactions"]
-
-    if not raw_transactions:
-        print("No transactions recorded yet")
-        return
-
-    print("-" * 75)
-
-    for transaction_dict in raw_transactions:
-        transaction_object = Transaction.from_dict(transaction_dict)
-        print(transaction_object.transaction_details())
-    print("-" * 75)
-
-def search_by_category(data):
-    print("\n---- Search By Category ----")
-    category_query = input("Enter category to search (Food, Transport, etc): ").strip().capitalize()
-
-    matched_dicts = [trans for trans in data["transactions"] if trans["category"].lower() == category_query.lower()]
-
-    if not matched_dicts:
-        print(f"No transactions found for category '{category_query}'")
-        return
-    
-    print(f"\nTransactions in category: {category_query}")
-    print("-" * 60)
-
-    for transaction_dict in matched_dicts:
-        transaction_object = Transaction.from_dict(transaction_dict)
-        print(transaction_object.transaction_details())
-    print("-" * 60)
-
-
-def set_budget(data):
-    print("\n--- Set or Update Monthly Budgets ---")
-    category = input("Enter category name (e.g: Food,Transport, Rent): ").strip().capitalize()
+    new_id = max((trans.id for trans in manager.transactions), default=0) + 1
 
     try:
-        limit = float(input(f"Enter monthly budget limit for {category} ($): "))
-        if limit < 0:
-            print("Budget limit cannot be negative")
-            return
-    except ValueError:
-        print("Invalid number format")
+        new_trans = Transaction(
+            id = new_id,
+            date = date_str,
+            type_ = input_type,
+            amount = amount,
+            category = category,
+            description = description
+        )
+    except ValueError as e:
+        print(f"Validation error: {e}")
         return
 
-    data["budgets"][category] = limit
-    save_data(data)
-    print(f"Budget for '{category}' successfully set to ${limit:.2f}")
+    manager.add_transaction(new_trans)
+    print(f"Transaction #{new_id} added successfully")
+
+    if input_type == "expense":
+        budget_info = manager.check_budget(category)
+        if budget_info["budget"] is not None:
+            spent = budget_info["spent"]
+            limit = budget_info["budget"]
+
+            if spent > limit:
+                print(f"Alert! You have exceeded your budget for {category}")
+                print(f"Spent: ${spent:2f} / Limit: ${limit:.2f}")
+
+def view_transactions(manager: FinanceManager):
+    if not manager.transactions:
+        print("No transactions recorded yet")
+        return
+    print("-" * 75)
+    for trans in manager.transactions:
+        print(trans.transaction_details())
+    print("-" * 75)
+
+def search_by_category(manager: FinanceManager):
+    print("\n---- Search By Category ----")
+    category_query = input("Enter category to search (Food, Transport, etc): ").strip()
+    matched = manager.search_by_category(category_query)
+
+    if not matched:
+        print(f"No transactions found for '{category_query}' category")
+        return
+    
+    print(f"\nTransactions in category: {category_query.capitalize()}")
+    print("-" * 60)
+
+    for trans in matched:
+        print(trans.transaction_details())
+    print("-" * 60)
+
+def set_budget(manager: FinanceManager):
+    print("\n--- Set or Update Monthly Budgets ---")
+
+    while True:
+        category = input("Enter category name: ").strip()
+        if category:
+            break
+        print("Category cannot be empty")
+
+        try:
+            limit = float(input(f"Enter monthly limit for {category} ($): "))
+        except ValueError:
+            print("Invalid number format")
+            return
+
+        try:
+            manager.set_budget(category, limit)
+            print(f"Budget for '{category.capitalize()}' successfully set to ${limit:.2f}")
+        except ValueError as e:
+            print(f"Validation error: {e}")
+
+def view_budget(manager: FinanceManager):
+    print("\n--- Check Budget ---")
+    category = input("Enter category to check: ").strip()
+
+    info = manager.check_budget(category)
+    print(f"\nBudget status for '{info['category'].capitalize()}':")
+    print(f" Spent:  ${info['spent']:.2f}")
+
+    if info['budget'] is not None:
+        print(f" Budget: ${info['budget']:.2f}")
+        print(f" Remaining: ${info['remaining']:.2f}")
+        if info['remaining'] < 0:
+            print(" Status:   Over Budget!")
+        else:
+            print("  Status:  On Track!")
+    else:
+        print("  Budget: Not Set")
