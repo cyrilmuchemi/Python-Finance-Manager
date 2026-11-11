@@ -1,6 +1,26 @@
 from datetime import datetime
 from models import Transaction, FinanceManager
 
+def process_add_transaction(manager: FinanceManager, type_:str, date_str: str, amount: float, category: str, description: str):
+    new_id = max((trans.id for trans in manager.transactions), default = 0) + 1
+
+    trans = Transaction(
+        id = new_id,
+        date = date_str,
+        type_ = type_,
+        amount = amount,
+        category = category,
+        description = description
+    )
+
+    manager.add_transaction(trans)
+
+    return trans
+
+def process_set_budget(manager: FinanceManager, category: str, limit: float):
+    manager.set_budget(category, limit)
+    return manager.budgets[category.strip().lower()]
+
 def add_transaction(manager:FinanceManager):
     print("\n--- Add a new Transaction ---")
     input_type = input("Type: (income / expense): ").strip().lower()
@@ -36,33 +56,22 @@ def add_transaction(manager:FinanceManager):
     if not description:
         description = "No description"
 
-    new_id = max((trans.id for trans in manager.transactions), default=0) + 1
-
     try:
-        new_trans = Transaction(
-            id = new_id,
-            date = date_str,
-            type_ = input_type,
-            amount = amount,
-            category = category,
-            description = description
-        )
+        trans = process_add_transaction(manager, input_type, date_str, amount, category, description)
+        print(f"Transaction #{trans.id} added successfully.")
+
+        if input_type == "expense":
+            budget_info = manager.check_budget(category)
+            if budget_info["budget"] is not None:
+                spent = budget_info["spent"]
+                limit = budget_info["budget"]
+
+                if spent > limit:
+                    print(f"Alert: You have exceeded your budget for {category}")
+                    print(f"Spent: ${spent:.2f} / Limit: ${limit:.2f}")
+
     except ValueError as e:
         print(f"Validation error: {e}")
-        return
-
-    manager.add_transaction(new_trans)
-    print(f"Transaction #{new_id} added successfully")
-
-    if input_type == "expense":
-        budget_info = manager.check_budget(category)
-        if budget_info["budget"] is not None:
-            spent = budget_info["spent"]
-            limit = budget_info["budget"]
-
-            if spent > limit:
-                print(f"Alert! You have exceeded your budget for {category}")
-                print(f"Spent: ${spent:2f} / Limit: ${limit:.2f}")
 
 def view_transactions(manager: FinanceManager):
     if not manager.transactions:
@@ -98,17 +107,17 @@ def set_budget(manager: FinanceManager):
             break
         print("Category cannot be empty")
 
-        try:
-            limit = float(input(f"Enter monthly limit for {category} ($): "))
-        except ValueError:
-            print("Invalid number format")
-            return
+    try:
+        limit = float(input(f"Enter monthly limit for {category} ($): "))
+    except ValueError:
+        print("Invalid number format")
+        return
 
-        try:
-            manager.set_budget(category, limit)
-            print(f"Budget for '{category.capitalize()}' successfully set to ${limit:.2f}")
-        except ValueError as e:
-            print(f"Validation error: {e}")
+    try:
+        process_set_budget(manager, category, limit)
+        print(f"Budget for '{category.capitalize()}' successfuly set to ${limit:.2f}")
+    except ValueError as e:
+        print(f"Validation error: {e}")
 
 def view_budget(manager: FinanceManager):
     print("\n--- Check Budget ---")
