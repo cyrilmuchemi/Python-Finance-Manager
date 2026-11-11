@@ -1,291 +1,206 @@
-<a name="readme-top"></a>
+# Personal Finance Manager
 
-<!--
-!!! IMPORTANT !!!
-This README is an example of how you could professionally present your codebase. 
-Writing documentation is a crucial part of your work as a professional software developer and cannot be ignored. 
+A command-line personal finance management application built with Python. Track income and expenses, manage category-based budgets, monitor spending, and generate monthly financial summaries — all from a simple interactive interface.
 
-You should modify this file to match your project and remove sections that don't apply.
+## Table of Contents
 
-REQUIRED SECTIONS:
-- Table of Contents
-- About the Project
-  - Built With
-  - Live Demo
-- Getting Started
-- Authors
-- Future Features
-- Contributing
-- Show your support
-- Acknowledgements
-- License
+- [About the Project](#about-the-project)
+- [Features](#features)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Usage](#usage)
+- [Running Tests](#running-tests)
+- [Future Improvements](#future-improvements)
+- [Contributing](#contributing)
+- [Author](#author)
+- [Acknowledgements](#acknowledgements)
+- [License](#license)
 
-OPTIONAL SECTIONS:
-- FAQ
+## About the Project
 
-After you're finished please remove all the comments and instructions!
+**Personal Finance Manager** is a Python-based command-line application designed to help users organize and monitor their personal finances.
 
-For more information on the importance of a professional README for your repositories: https://github.com/microverseinc/curriculum-transversal-skills/blob/main/documentation/articles/readme_best_practices.md
--->
+The application allows users to record income and expenses, categorize transactions, establish spending budgets, and review their financial activity through monthly summaries.
 
-<div align="center">
-  <!-- You are encouraged to replace this logo with your own! Otherwise you can also remove it. -->
-  <img src="murple_logo.png" alt="logo" width="140"  height="auto" />
-  <br/>
+The project was developed with an emphasis on practical Python programming concepts, including object-oriented programming, modular design, input validation, exception handling, JSON-based data persistence, and automated testing.
 
-  <h3><b>Microverse README Template</b></h3>
+## Features
 
-</div>
+- **Transaction Management:** Record, view, and search income and expense transactions.
+- **Category-Based Budgets:** Set and update spending limits for individual expense categories.
+- **Budget Monitoring:** Check category spending against configured budgets and identify overspending.
+- **Monthly Financial Reports:** Generate summaries of income, expenses, and net balance for a selected month.
+- **Persistent Data Storage:** Save and retrieve financial records using JSON.
+- **Input Validation:** Validate transaction details, amounts, dates, and budget values.
+- **Data Recovery:** Detect corrupted JSON save files and preserve a backup before initializing fresh data.
 
-<!-- TABLE OF CONTENTS -->
+## Technology Stack
 
-# 📗 Table of Contents
+| Technology | Purpose |
+|---|---|
+| Python 3 | Core application logic |
+| JSON | Local data persistence |
+| `datetime` | Date handling and monthly reporting |
+| `unittest` | Automated testing |
+| `tempfile` | Isolated test environments |
 
-- [📖 About the Project](#about-project)
-  - [🛠 Built With](#built-with)
-    - [Tech Stack](#tech-stack)
-    - [Key Features](#key-features)
-  - [🚀 Live Demo](#live-demo)
-- [💻 Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Setup](#setup)
-  - [Install](#install)
-  - [Usage](#usage)
-  - [Run tests](#run-tests)
-  - [Deployment](#deployment)
-- [👥 Authors](#authors)
-- [🔭 Future Features](#future-features)
-- [🤝 Contributing](#contributing)
-- [⭐️ Show your support](#support)
-- [🙏 Acknowledgements](#acknowledgements)
-- [❓ FAQ (OPTIONAL)](#faq)
-- [📝 License](#license)
+The application uses Python's standard library and does not require a database server or external framework.
 
-<!-- PROJECT DESCRIPTION -->
+## Project Structure
 
-# 📖 [your_project_name] <a name="about-project"></a>
+```text
+Python-Finance-Manager/
+│
+├── main.py              # Application entry point and menu navigation
+├── models.py            # Transaction and FinanceManager classes
+├── transactions.py      # Transaction and budget operations
+├── reports.py           # Monthly financial reporting
+├── storage.py           # JSON data loading and saving
+│
+├── test_manager.py      # Finance manager tests
+├── test_storage.py      # Data persistence tests
+│
+├── finance_data.json    # Locally stored financial data
+└── README.md
+```
 
-> Describe your project in 1 or 2 sentences.
+## Getting Started
 
-**[your_project__name]** is a...
-
-## 🛠 Built With <a name="built-with"></a>
-
-### Tech Stack <a name="tech-stack"></a>
-
-> Describe the tech stack and include only the relevant sections that apply to your project.
-
-<details>
-  <summary>Client</summary>
-  <ul>
-    <li><a href="https://reactjs.org/">React.js</a></li>
-  </ul>
-</details>
-
-<details>
-  <summary>Server</summary>
-  <ul>
-    <li><a href="https://expressjs.com/">Express.js</a></li>
-  </ul>
-</details>
-
-<details>
-<summary>Database</summary>
-  <ul>
-    <li><a href="https://www.postgresql.org/">PostgreSQL</a></li>
-  </ul>
-</details>
-
-<!-- Features -->
-
-### Key Features <a name="key-features"></a>
-
-> Describe between 1-3 key features of the application.
-
-- **[key_feature_1]**
-- **[key_feature_2]**
-- **[key_feature_3]**
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- LIVE DEMO -->
-
-## 🚀 Live Demo <a name="live-demo"></a>
-
-> Add a link to your deployed project.
-
-- [Live Demo Link](https://google.com)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- GETTING STARTED -->
-
-## 💻 Getting Started <a name="getting-started"></a>
-
-> Describe how a new developer could make use of your project.
-
-To get a local copy up and running, follow these steps.
+Follow these instructions to run the application locally.
 
 ### Prerequisites
 
-In order to run this project you need:
+You will need:
 
-<!--
-Example command:
+- Python 3.10 or later.
+- Git.
+- A terminal or command-line interface.
 
-```sh
- gem install rails
+Check your Python installation:
+
+```bash
+python3 --version
 ```
- -->
 
-### Setup
+### Installation
 
-Clone this repository to your desired folder:
+**1. Clone the repository**
 
-<!--
-Example commands:
-
-```sh
-  cd my-folder
-  git clone git@github.com:myaccount/my-project.git
+```bash
+git clone https://github.com/cyrilmuchemi/Python-Finance-Manager.git
 ```
---->
 
-### Install
+**2. Navigate into the project directory**
 
-Install this project with:
-
-<!--
-Example command:
-
-```sh
-  cd my-project
-  gem install
+```bash
+cd Python-Finance-Manager
 ```
---->
 
-### Usage
+**3. Create a virtual environment**
 
-To run the project, execute the following command:
-
-<!--
-Example command:
-
-```sh
-  rails server
+```bash
+python3 -m venv .venv
 ```
---->
 
-### Run tests
+**4. Activate the virtual environment**
 
-To run tests, run the following command:
+On Linux or macOS:
 
-<!--
-Example command:
-
-```sh
-  bin/rails test test/models/article_test.rb
+```bash
+source .venv/bin/activate
 ```
---->
 
-### Deployment
+On Windows:
 
-You can deploy this project using:
-
-<!--
-Example:
-
-```sh
-
+```bash
+.venv\Scripts\activate
 ```
- -->
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+No additional Python packages are currently required.
 
-<!-- AUTHORS -->
+## Usage
 
-## 👥 Authors <a name="authors"></a>
+Start the application with:
 
-> Mention all of the collaborators of this project.
+```bash
+python3 main.py
+```
 
-👤 **Author1**
+The interactive menu provides the following operations:
 
-- GitHub: [@githubhandle](https://github.com/githubhandle)
-- Twitter: [@twitterhandle](https://twitter.com/twitterhandle)
-- LinkedIn: [LinkedIn](https://linkedin.com/in/linkedinhandle)
+| Option | Operation |
+|---|---|
+| 1 | Add an income or expense transaction |
+| 2 | View recorded transactions |
+| 3 | Search transactions by category |
+| 4 | Set or update a category budget |
+| 5 | Check category budget status |
+| 6 | Generate a monthly financial summary |
+| 7 | Save data and exit |
 
-👤 **Author2**
+Financial records are stored locally in `finance_data.json` and loaded when the application starts.
 
-- GitHub: [@githubhandle](https://github.com/githubhandle)
-- Twitter: [@twitterhandle](https://twitter.com/twitterhandle)
-- LinkedIn: [LinkedIn](https://linkedin.com/in/linkedinhandle)
+**Note:** The application is intended for local use. Keep your financial data file private and maintain backups of important records.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+## Running Tests
 
-<!-- FUTURE FEATURES -->
+The project includes automated tests using Python's built-in `unittest` framework.
 
-## 🔭 Future Features <a name="future-features"></a>
+Run the complete test suite from the project root:
 
-> Describe 1 - 3 features you will add to the project.
+```bash
+python3 -m unittest discover -v
+```
 
-- [ ] **[new_feature_1]**
-- [ ] **[new_feature_2]**
-- [ ] **[new_feature_3]**
+The tests cover application functionality and data persistence, including saving, loading, and handling corrupted JSON files.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+## Future Improvements
 
-<!-- CONTRIBUTING -->
+Potential enhancements include:
 
-## 🤝 Contributing <a name="contributing"></a>
+- [ ] Add transaction editing and deletion.
+- [ ] Introduce date-range filtering and more detailed financial analytics.
+- [ ] Add CSV and PDF report exports.
+- [ ] Implement recurring transactions.
+- [ ] Introduce monthly budget tracking and historical comparisons.
+- [ ] Build a graphical user interface or web-based version.
+- [ ] Add database support for more scalable data management.
 
-Contributions, issues, and feature requests are welcome!
+## Contributing
 
-Feel free to check the [issues page](../../issues/).
+Contributions, bug reports, and feature suggestions are welcome.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+To contribute:
 
-<!-- SUPPORT -->
+1. Fork the repository.
+2. Create a feature branch:
 
-## ⭐️ Show your support <a name="support"></a>
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
 
-> Write a message to encourage readers to support your project
+3. Commit your changes:
 
-If you like this project...
+   ```bash
+   git commit -m "Add: describe your changes"
+   ```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+4. Push your branch and open a pull request.
 
-<!-- ACKNOWLEDGEMENTS -->
+For significant changes, consider opening an issue first to discuss the proposed implementation.
 
-## 🙏 Acknowledgments <a name="acknowledgements"></a>
+## Author
 
-> Give credit to everyone who inspired your codebase.
+**Cyril Muchemi**
 
-I would like to thank...
+- GitHub: [@cyrilmuchemi](https://github.com/cyrilmuchemi)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+## Acknowledgements
 
-<!-- FAQ (optional) -->
+- The Python community for its documentation and learning resources.
+- The open-source community for promoting knowledge sharing and collaborative software development.
 
-## ❓ FAQ (OPTIONAL) <a name="faq"></a>
+## License
 
-> Add at least 2 questions new developers would ask when they decide to use your project.
-
-- **[Question_1]**
-
-  - [Answer_1]
-
-- **[Question_2]**
-
-  - [Answer_2]
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- LICENSE -->
-
-## 📝 License <a name="license"></a>
-
-This project is [MIT](./LICENSE) licensed.
-
-_NOTE: we recommend using the [MIT license](https://choosealicense.com/licenses/mit/) - you can set it up quickly by [using templates available on GitHub](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/adding-a-license-to-a-repository). You can also use [any other license](https://choosealicense.com/licenses/) if you wish._
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+No license has currently been specified for this repository. Unless a license is added, the default copyright restrictions apply. See [Choose a License](https://choosealicense.com/) for guidance on selecting an appropriate open-source license.
